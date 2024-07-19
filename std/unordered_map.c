@@ -81,10 +81,15 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
         
         // 2. Resize storage
         
-        map->storage_capacity = index;
-        
+        size_t new_capacity = map->storage_capacity * 2;
+        map->storage_capacity *= 2;
         free(map->storage);
-        map->storage = malloc(sizeof(unordered_map_value_type) * map->storage_capacity);
+        map->storage = malloc(new_capacity * sizeof(unordered_map_value_type));
+        if (!map->storage)
+            throw(new_exception(bad_alloc));
+
+        memset(map->storage + map->storage_capacity, 0, map->storage_capacity);
+        map->storage_capacity = new_capacity;
         
         // 3. Refill the reallocated storage with rehashed entries
         
@@ -122,12 +127,12 @@ bool _unordered_map_contains(const unordered_map *map, unordered_map_key_type ke
     if (index >= map->storage_capacity)
         return false;
     
-    return &map->storage[index];
+    return map->storage[index].value;
 }
 
 float unordered_map_load_factor(const unordered_map *map)
 {
-    return map->size / map->storage_capacity;
+    return (float)map->size / map->storage_capacity;
 }
 
 float unordered_map_max_load_factor(const unordered_map *map)

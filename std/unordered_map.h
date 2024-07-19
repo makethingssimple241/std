@@ -14,11 +14,13 @@
 #include <stdbool.h>
 
 #define new_unordered_map(_f) _new_unordered_map((hash_function)(_f))
-#define unordered_map_insert(map, key, value) _unordered_map_insert((map), (uintptr_t)(key), (value))
+#define unordered_map_insert(map, key, value) _unordered_map_insert((map), (uintptr_t)(key), (void *)(value))
 #define unordered_map_at(map, key) _unordered_map_at((map), (uintptr_t)(key))
 #define unordered_map_contains(map, key) _unordered_map_contains((map), (uintptr_t)(key))
 
+/// @note Can be used to hold both integers or pointers
 typedef uintptr_t unordered_map_key_type;
+/// @note Can only be used to hold pointers since empty key-value slots are signified by having a NULL value
 typedef void *unordered_map_mapped_type;
 
 typedef struct {

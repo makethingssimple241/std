@@ -172,19 +172,22 @@ int main(int argc, const char **argv) {
     
     printf("*** std/unordered_map.h, stdx/assert.h and stdx/program_options.h tests ***\n");
     {
+        printf("Usage: %s <options>\nOptions:\n", argv[0]);
+
         program_option options[] = {
-            {program_option_type_flag, "verbose,v", .required=false},
-            {program_option_type_value, "username", .required=true}
+            {program_option_type_flag, "verbose,v", .required=false, "Enable verbose output"},
+            {program_option_type_value, "username", .required=true, "Your username"}
         };
         
         command_line_parser *parser = new_command_line_parser();
         command_line_parser_add_options(parser, options, len(options));
+        command_line_parser_describe_options(parser, stdout);
         command_line_parser_parse(parser, argc, argv);
         
         STDX_ASSERT(unordered_map_contains(parser->result, "verbose"));
         
-        string *username = (string *)unordered_map_at(parser->result, (uintptr_t)"username");
-        STDX_ASSERT(string_equal_c_str(username, "makethingssimple"));
+        const char *username = (const char *)unordered_map_at(parser->result, "username");
+        STDX_ASSERT(c_str_equal(username, "makethingssimple"));
         
         delete_command_line_parser(parser);
     }
