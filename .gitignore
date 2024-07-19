@@ -51,5 +51,12 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+
 # System files
 .DS_Store
+
+# Editor configurations
+compile_flags.txt
+
+# Intermediates, symbol files and executables
+build/

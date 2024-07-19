@@ -56,16 +56,16 @@ void _vector_next(const vector *vec, void **iterator)
     *iterator += vec->value_size;
 }
 
-void vector_resize(vector *vec, size_t size)
+void vector_resize(vector *vec, size_t capacity)
 {
-    if (size < vec->capacity)
+    if (capacity < vec->capacity)
         return;
     
     // TODO: Zero memory
-    void* new_data = realloc(vec->data, vec->value_size * size);
+    void* new_data = realloc(vec->data, vec->value_size * capacity);
     if (new_data) {
         vec->data = new_data;
-        vec->capacity = size;
+        vec->capacity = capacity;
     } else {
         throw(new_exception(bad_alloc));
     }

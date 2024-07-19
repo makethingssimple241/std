@@ -9,8 +9,8 @@
 
 #include <stdio.h>
 
-__attribute__((noreturn)) void _terminate(void) {
-    fprintf(stderr, "terminating due to uncaught exception: %s", exception.what);
+noreturn void _terminate(void) {
+    fprintf(stderr, "terminating due to uncaught exception: %s\n", exception.what);
     abort();
 }
 
@@ -18,7 +18,7 @@ vector *_eh_frame = NULL;
 struct exception exception;
 static terminate_handler _terminate_handler = _terminate;
 
-__attribute__((noreturn)) void terminate(void) {
+noreturn void terminate(void) {
     _terminate_handler();
 }
 

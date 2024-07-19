@@ -39,11 +39,11 @@ void _vector_next(const vector *vec, void **iterator);
 
 // MARK: Capacity
 
-void vector_resize(vector *vec, size_t size);
+/// @brief This function resizes the vector if the new capacity is greater than its capacity
+void vector_resize(vector *vec, size_t capacity);
 
 // MARK: Modifiers
 
-/// @brief This function resizes the vector and zeroes the extra space
 void vector_push_back(vector *vec, void *value);
 /// @note This is an unsafe function.
 /// It assumes that the vector has a size that can hold the pushed extra element.

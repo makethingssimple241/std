@@ -10,6 +10,8 @@
 
 #include <stdbool.h>
 
-#define len(a) sizeof(a) / sizeof((a)[0])
+#define len(a)      sizeof(a) / sizeof((a)[0])
+#define noreturn    __attribute__((noreturn))
+#define null        0
 
 #endif /* std_cstddef_h */
