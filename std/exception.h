@@ -8,6 +8,7 @@
 #ifndef std_exception_h
 #define std_exception_h
 
+#include "cstddef.h"
 #include "vector.h"
 
 #include <stdbool.h>
@@ -31,12 +32,12 @@ struct exception {
     const char *what;
 };
 
-typedef __attribute__((noreturn)) void (*terminate_handler)(void);
+typedef noreturn void (*terminate_handler)(void);
 
 extern vector *_eh_frame;
 extern struct exception exception;
 
-__attribute__((noreturn)) void terminate(void);
+noreturn void terminate(void);
 terminate_handler get_terminate(void);
 void set_terminate(terminate_handler f);
 
