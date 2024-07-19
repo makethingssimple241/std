@@ -12,6 +12,6 @@
 
 void assertion_failed(const char *file, unsigned long line, const char *function, const char *expr)
 {
-    fprintf(stderr, "%s:%lu:%s: Assertion failed: %s", file, line, function, expr);
+    fprintf(stderr, "%s:%lu:%s: Assertion failed: %s\n", file, line, function, expr);
     abort();
 }
