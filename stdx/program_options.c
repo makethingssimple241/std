@@ -42,7 +42,7 @@ void command_line_parser_add_options(command_line_parser *parser, program_option
 void command_line_parser_describe_options(command_line_parser *parser, FILE *stream)
 {
     vector *key_lengths = new_vector(size_t);
-    vector_resize(key_lengths, parser->options->size);
+    vector_reserve(key_lengths, parser->options->size);
     size_t max_key_and_requirements_length = 0;
 
     for (size_t i = 0; i < parser->options->size; i++) {
