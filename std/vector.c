@@ -56,7 +56,11 @@ void _vector_next(const vector *vec, void **iterator)
     *iterator += vec->value_size;
 }
 
-void vector_resize(vector *vec, size_t capacity)
+bool vector_empty(const vector *vec) {
+    return vec->size == 0;
+}
+
+void vector_reserve(vector *vec, size_t capacity)
 {
     if (capacity < vec->capacity)
         return;
@@ -71,18 +75,18 @@ void vector_resize(vector *vec, size_t capacity)
     }
 }
 
-void vector_push_back(vector *vec, void *value) {
+void vector_push_back(vector *vec, const void *value) {
     if (vec->size >= vec->capacity) {
         if (vec->capacity > 0)
-            vector_resize(vec, vec->capacity * vector_growth);
+            vector_reserve(vec, vec->capacity * vector_growth);
         else
-            vector_resize(vec, 1);
+            vector_reserve(vec, 1);
     }
     
     vector_push_back_unsafe(vec, value);
 }
 
-void vector_push_back_unsafe(vector *vec, void* value)
+void vector_push_back_unsafe(vector *vec, const void* value)
 {
     memcpy(vec->data + vec->value_size * vec->size++, value, vec->value_size);
 }
@@ -97,15 +101,15 @@ void *vector_pop_back(vector *vec)
     return NULL;
 }
 
-void vector_insert(vector *vec, void *value, size_t i) {
+void vector_insert(vector *vec, const void *value, size_t i) {
     if (i >= vec->size)
         throw(new_exception(out_of_range));
     
     if (vec->size >= vec->capacity) {
         if (vec->capacity > 0)
-            vector_resize(vec, vec->capacity * vector_growth);
+            vector_reserve(vec, vec->capacity * vector_growth);
         else
-            vector_resize(vec, 1);
+            vector_reserve(vec, 1);
     }
     
     memmove(vec->data + vec->value_size * (i + 1),
