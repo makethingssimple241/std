@@ -7,6 +7,7 @@
 
 #include "program_options.h"
 
+#include <std/allocator.h>
 #include <std/exception.h>
 #include <std/format.h>
 
@@ -16,7 +17,7 @@
 
 command_line_parser *new_command_line_parser(void)
 {
-    command_line_parser *parser = malloc(sizeof(command_line_parser));
+    command_line_parser *parser = allocator_allocate(sizeof(command_line_parser));
     if (!parser)
         throw(system_error(errno, strerror(errno)));
     
@@ -29,7 +30,7 @@ void delete_command_line_parser(command_line_parser *parser)
 {
     delete_unordered_map(parser->result);
     delete_vector(parser->options);
-    free(parser);
+    allocator_free(parser);
 }
 
 void command_line_parser_add_options(command_line_parser *parser, program_option *options, size_t count)

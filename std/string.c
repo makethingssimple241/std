@@ -6,6 +6,7 @@
 //
 
 #include "string.h"
+#include "allocator.h"
 #include "exception.h"
 #include "stdexcept.h"
 
@@ -20,7 +21,7 @@ string *new_string(void)
 
 string *new_string_from_c_str(const char *c_str)
 {
-    string *s = malloc(sizeof(string));
+    string *s = allocator_allocate(sizeof(string));
     if (!s)
         throw(system_error(errno, strerror(errno)));
     
@@ -36,7 +37,7 @@ string *new_string_from_c_str(const char *c_str)
 
 string *new_string_from_c_str_without_copy(char *c_str)
 {
-    string *s = malloc(sizeof(string));
+    string *s = allocator_allocate(sizeof(string));
     if (!s)
         throw(system_error(errno, strerror(errno)));
     
@@ -47,13 +48,13 @@ string *new_string_from_c_str_without_copy(char *c_str)
 
 string *new_string_from_c_str_view(const char *c_str, size_t length)
 {
-    string *s = malloc(sizeof(string));
+    string *s = allocator_allocate(sizeof(string));
     if (!s)
         throw(new_exception(bad_alloc));
     
     size_t size = length + 1;
     
-    s->c_str = malloc(sizeof(char) * size);
+    s->c_str = allocator_allocate(sizeof(char) * size);
     if (!s->c_str)
         throw(new_exception(bad_alloc));
     
@@ -70,21 +71,21 @@ string *copy_string(const string *s)
 
 void delete_string(string *s)
 {
-    free(s->c_str);
-    free(s);
+    allocator_free(s->c_str);
+    allocator_free(s);
 }
 
 void string_concatenate(string *s1, const string *s2)
 {
     size_t length = s2->size - 1 + s1->size;
-    char *buffer = malloc(sizeof(char) * length);
+    char *buffer = allocator_allocate(sizeof(char) * length);
     if (!buffer)
         throw(new_exception(bad_alloc));
     
     strcpy(buffer, s1->c_str);
     strcpy(buffer + s1->size - 1, s2->c_str);
     
-    free(s1->c_str);
+    allocator_free(s1->c_str);
     s1->c_str = buffer;
     s1->size = length;
 }
@@ -94,21 +95,21 @@ void string_concatenate_with_c_str(string *s1, const char* s2)
     size_t s2Length = strlen(s2);
     
     size_t length = s2Length + s1->size;
-    char *buffer = malloc(sizeof(char) * length);
+    char *buffer = allocator_allocate(sizeof(char) * length);
     if (!buffer)
         throw(new_exception(bad_alloc));
     
     strcpy(buffer, s1->c_str);
     strcpy(buffer + s1->size - 1, s2);
     
-    free(s1->c_str);
+    allocator_free(s1->c_str);
     s1->c_str = buffer;
     s1->size = length;
 }
 
 void string_append(string *s, char c)
 {
-    char *buffer = malloc(sizeof(char) * ++s->size);
+    char *buffer = allocator_allocate(sizeof(char) * ++s->size);
     if (!buffer)
         throw(new_exception(bad_alloc));
     
@@ -116,7 +117,7 @@ void string_append(string *s, char c)
     buffer[s->size - 2] = c;
     buffer[s->size - 1] = '\0';
     
-    free(s->c_str);
+    allocator_free(s->c_str);
     s->c_str = buffer;
 }
 

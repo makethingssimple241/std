@@ -6,6 +6,7 @@
 //
 
 #include "unordered_map.h"
+#include "allocator.h"
 #include "exception.h"
 #include "stdexcept.h"
 
@@ -15,7 +16,7 @@
 
 unordered_map *_new_unordered_map(hash_function hash_function)
 {
-    unordered_map *map = malloc(sizeof(unordered_map));
+    unordered_map *map = allocator_allocate(sizeof(unordered_map));
     if (!map)
         throw(new_exception(bad_alloc));
     
@@ -30,7 +31,7 @@ unordered_map *_new_unordered_map(hash_function hash_function)
 
 void delete_unordered_map(unordered_map *map)
 {
-    free(map->storage);
+    allocator_free(map->storage);
 }
 
 unordered_map_value_type *unordered_map_begin(const unordered_map *map)
@@ -73,7 +74,7 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
     {
         // 1. Make a copy of the original entries
         
-        unordered_map_value_type *copy = malloc(sizeof(unordered_map_value_type) * map->storage_capacity);
+        unordered_map_value_type *copy = allocator_allocate(sizeof(unordered_map_value_type) * map->storage_capacity);
         if (!copy)
             throw(new_exception(bad_alloc));
         
@@ -83,8 +84,8 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
         
         size_t new_capacity = map->storage_capacity * 2;
         map->storage_capacity *= 2;
-        free(map->storage);
-        map->storage = malloc(new_capacity * sizeof(unordered_map_value_type));
+        allocator_free(map->storage);
+        map->storage = allocator_allocate(new_capacity * sizeof(unordered_map_value_type));
         if (!map->storage)
             throw(new_exception(bad_alloc));
 
@@ -100,7 +101,7 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
         
         // 4. Free the memory of the copy
         
-        free(copy);
+        allocator_free(copy);
         
         // 5. Generate a index to insert the new element with the resized size
         

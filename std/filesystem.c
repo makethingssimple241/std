@@ -6,6 +6,7 @@
 //
 
 #include "filesystem.h"
+#include "allocator.h"
 #include "exception.h"
 #include "stdexcept.h"
 
@@ -27,7 +28,7 @@
 filesystem_path *new_filesystem_path(void)
 {
 #ifndef _WIN32
-    char *buffer = malloc(sizeof(char) * MAXPATHLEN);
+    char *buffer = allocator_allocate(sizeof(char) * MAXPATHLEN);
     if (!buffer)
         throw(new_exception(bad_alloc));
     
