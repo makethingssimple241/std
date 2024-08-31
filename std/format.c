@@ -6,6 +6,7 @@
 //
 
 #include "format.h"
+#include "allocator.h"
 #include "exception.h"
 #include "stdexcept.h"
 #include "string.h"
@@ -27,7 +28,7 @@ string *format(const char *format, ...)
     va_start(args, format);
     
     size += 1; // for null-termination character
-    char *buffer = malloc(sizeof(char) * size);
+    char *buffer = allocator_allocate(sizeof(char) * size);
     vsnprintf(buffer, size, format, args);
     
     va_end(args);

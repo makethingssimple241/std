@@ -5,6 +5,7 @@
 //  Created by MakeThingsSimple on 26/4/2024.
 //
 
+#include <std/allocator.h>
 #include <std/cstddef.h>
 #include <std/exception.h>
 #include <std/filesystem.h>
