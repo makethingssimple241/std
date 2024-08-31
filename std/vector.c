@@ -6,6 +6,7 @@
 //
 
 #include "vector.h"
+#include "allocator.h"
 #include "exception.h"
 #include "stdexcept.h"
 
@@ -13,21 +14,21 @@
 #include <string.h>
 
 vector *_new_vector(size_t value_size) {
-    vector *vec = malloc(sizeof(vector));
+    vector *vec = allocator_allocate(sizeof(vector));
     if (!vec)
         throw(new_exception(bad_alloc));
     
     vec->value_size = value_size;
     vec->size = 0;
     vec->capacity = 0;
-    vec->data = NULL;
+    vec->data = null;
     
     return vec;
 }
 
 void delete_vector(vector *vec) {
-    free(vec->data);
-    free(vec);
+    allocator_free(vec->data);
+    allocator_free(vec);
 }
 
 void *vector_at(const vector *vec, size_t index) {
@@ -65,14 +66,14 @@ void vector_reserve(vector *vec, size_t capacity)
     if (capacity < vec->capacity)
         return;
     
-    // TODO: Zero memory
-    void* new_data = realloc(vec->data, vec->value_size * capacity);
-    if (new_data) {
-        vec->data = new_data;
-        vec->capacity = capacity;
-    } else {
+    void *new_data = allocator_allocate(vec->value_size * capacity);
+    if (!new_data)
         throw(new_exception(bad_alloc));
-    }
+
+    memset(new_data, 0, vec->value_size * capacity);
+    memcpy(new_data, vec->data, vec->value_size * vec->size);
+    vec->data = new_data;
+    vec->capacity = capacity;
 }
 
 void vector_push_back(vector *vec, const void *value) {
