@@ -13,8 +13,8 @@
 #include <stdlib.h>
 
 typedef size_t hash;
-typedef hash(* hash_function)(uintptr_t);
+typedef hash(* hash_function)(void *);
 
-hash hash_string(const char *s);
+hash hash_string(const char **s);
 
 #endif /* std_functional_h */

@@ -7,13 +7,13 @@
 
 #include "functional.h"
 
-hash hash_string(const char *s)
+hash hash_string(const char **s)
 {
-    if (s) {
+    if (*s) {
         unsigned long hash = 5381;
-        char c;
+        char c = '\0';
         
-        const char *s_copy = s;
+        const char *s_copy = *s;
         
         while ((c = *s_copy++))
             hash = hash * 33 + c;
