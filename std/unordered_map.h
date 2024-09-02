@@ -13,13 +13,13 @@
 
 #include <stdbool.h>
 
-#define new_unordered_map(_f) _new_unordered_map((hash_function)(_f))
-#define unordered_map_insert(map, key, value) _unordered_map_insert((map), (uintptr_t)(key), (void *)(value))
-#define unordered_map_at(map, key) _unordered_map_at((map), (uintptr_t)(key))
-#define unordered_map_contains(map, key) _unordered_map_contains((map), (uintptr_t)(key))
+#define new_unordered_map(K, V, _f) _new_unordered_map(sizeof(K), sizeof(V), (hash_function)(_f))
+#define unordered_map_insert(map, key, value) _unordered_map_insert((map), (void *)(key), (void *)(value))
+#define unordered_map_at(map, key) _unordered_map_at((map), (void *)(key))
+#define unordered_map_contains(map, key) _unordered_map_contains((map), (void *)(key))
 
 /// @note Can be used to hold both integers or pointers
-typedef uintptr_t unordered_map_key_type;
+typedef void *unordered_map_key_type;
 /// @note Can only be used to hold pointers since empty key-value slots are signified by having a NULL value
 typedef void *unordered_map_mapped_type;
 
@@ -32,12 +32,14 @@ typedef struct {
     unordered_map_value_type *storage;
     size_t size;
     size_t storage_capacity;
+    size_t key_size;
+    size_t value_size;
     hash_function hash_function;
     float max_load_factor;
 } unordered_map;
 
 /// @note This is a private function that should not be called by the user
-unordered_map *_new_unordered_map(hash_function hash_function);
+unordered_map *_new_unordered_map(size_t key_size, size_t value_size, hash_function hash_function);
 void delete_unordered_map(unordered_map *map);
 
 // MARK: Iterators

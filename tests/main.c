@@ -145,13 +145,15 @@ int main(int argc, const char **argv) {
     
     printf("*** std/string.h, std/unordered_map.h and stdx/assert.h tests ***\n");
     {
-        unordered_map *map = new_unordered_map(hash_string);
+        unordered_map *map = new_unordered_map(const char *, string, hash_string);
         
         string *a = new_string_from_c_str("A");
         string *b = new_string_from_c_str("B");
         
-        unordered_map_insert(map, "A", a);
-        unordered_map_insert(map, "B", b);
+        const char* acs = "A";
+        const char* bcs = "B";
+        unordered_map_insert(map, &acs, a);
+        unordered_map_insert(map, &bcs, b);
         
         string *result = new_string();
         
@@ -185,10 +187,12 @@ int main(int argc, const char **argv) {
         command_line_parser_describe_options(parser, stdout);
         command_line_parser_parse(parser, argc, argv);
         
-        STDX_ASSERT(unordered_map_contains(parser->result, "verbose"));
+        const char *verbose_key = "verbose";
+        STDX_ASSERT(unordered_map_contains(parser->result, &verbose_key));
         
-        const char *username = (const char *)unordered_map_at(parser->result, "username");
-        STDX_ASSERT(c_str_equal(username, "makethingssimple"));
+        const char *username_key = "username";
+        const char **username = unordered_map_at(parser->result, &username_key);
+        STDX_ASSERT(c_str_equal(*username, "makethingssimple"));
         
         delete_command_line_parser(parser);
     }

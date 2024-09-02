@@ -14,7 +14,7 @@
 #include <stddef.h>
 #include <string.h>
 
-unordered_map *_new_unordered_map(hash_function hash_function)
+unordered_map *_new_unordered_map(size_t key_size, size_t value_size, hash_function hash_function)
 {
     unordered_map *map = allocator_allocate(sizeof(unordered_map));
     if (!map)
@@ -22,7 +22,10 @@ unordered_map *_new_unordered_map(hash_function hash_function)
     
     map->size = 0;
     map->storage_capacity = 10;
-    map->storage = calloc(map->storage_capacity, sizeof(unordered_map_value_type));
+    map->storage = allocator_allocate(sizeof(unordered_map_value_type) * map->storage_capacity);
+    memset(map->storage, 0, sizeof(unordered_map_value_type) * map->storage_capacity);
+    map->key_size = key_size;
+    map->value_size = value_size;
     map->max_load_factor = 0.8f;
     map->hash_function = hash_function;
     
@@ -31,6 +34,16 @@ unordered_map *_new_unordered_map(hash_function hash_function)
 
 void delete_unordered_map(unordered_map *map)
 {
+    for (size_t i = 0; i < map->storage_capacity; i++) {
+        void *key = map->storage[i].key;
+        void *value = map->storage[i].value;
+        
+        if (value) {
+            allocator_free(key);
+            allocator_free(value);
+        }
+    }
+
     allocator_free(map->storage);
 }
 
@@ -57,7 +70,7 @@ void unordered_map_next(const unordered_map *map, unordered_map_value_type** ite
     
     for (++i; i < map->storage_capacity; i++) {
         unordered_map_value_type *value = &map->storage[i];
-        if (map->hash_function(value->key) % map->storage_capacity == i && value->value) {
+        if (value->key && map->hash_function(value->key) % map->storage_capacity == i && value->value) {
             *iterator = value;
             return;
         }
@@ -107,8 +120,16 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
         
         index = map->hash_function(key) % map->storage_capacity;
     }
+
+    void *key_storage = allocator_allocate(map->key_size);
+    memset(key_storage, 0, map->key_size);
+    memcpy(key_storage, key, map->key_size);
     
-    map->storage[index] = (unordered_map_value_type){key, value};
+    void *value_storage = allocator_allocate(map->value_size);
+    memset(value_storage, 0, map->value_size);
+    memcpy(value_storage, value, map->value_size);
+
+    map->storage[index] = (unordered_map_value_type){key_storage, value_storage};
     map->size++;
 }
 

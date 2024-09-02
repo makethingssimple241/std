@@ -22,7 +22,7 @@ command_line_parser *new_command_line_parser(void)
         throw(system_error(errno, strerror(errno)));
     
     parser->options = new_vector(program_option);
-    parser->result = new_unordered_map(hash_string);
+    parser->result = new_unordered_map(const char *, const char *, hash_string);
     return parser;
 }
 
@@ -93,9 +93,10 @@ void command_line_parser_parse(command_line_parser *parser, int argc, const char
             
             if (used_long_key || used_short_key) {
                 switch (option->type) {
-                case program_option_type_flag:
-                    unordered_map_insert(parser->result, (uintptr_t)long_key, 1);
-                    break;
+                case program_option_type_flag: {
+                    const char *flag = (const char *)1;
+                    unordered_map_insert(parser->result, &long_key, &flag);
+                } break;
                 case program_option_type_value: {
                     if (++arg_index >= argc) {
                         // TODO: Memory of what will not be freed, allocate from arena
@@ -104,7 +105,7 @@ void command_line_parser_parse(command_line_parser *parser, int argc, const char
                         throw(new_exceptionx(command_line_parser_error, what->c_str));
                     }
                     
-                    unordered_map_insert(parser->result, (uintptr_t)long_key, argv[arg_index]);
+                    unordered_map_insert(parser->result, &long_key, &argv[arg_index]);
                 } break;
                 }
                 
