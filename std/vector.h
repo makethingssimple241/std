@@ -12,7 +12,6 @@
 #include <stdlib.h>
 
 #define new_vector(T) _new_vector(sizeof(T))
-#define vector_for_each(vec, f) _vector_for_each((vec), (void (*)(void *))(f))
 #define vector_next(vec, iterator) _vector_next((vec), (void **)(iterator))
 #define vector_growth 2
 
@@ -28,8 +27,7 @@ void delete_vector(vector *vec);
 // MARK: Element access
 
 void *vector_at(const vector *vec, size_t index);
-/// @note This is a private function that should not be called by the user
-void _vector_for_each(const vector *vec, void(*f)(void *value));
+void *vector_back(const vector *vec);
 
 // MARK: Iterators
 

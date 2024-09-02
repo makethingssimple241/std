@@ -20,10 +20,6 @@
 
 #include <string.h>
 
-void print_element(string *s) {
-    printf("%s\n", s->c_str);
-}
-
 int main(int argc, const char **argv) {
     printf("*** std/exception.h, std/fstream.h and std/stdexcept.h tests ***\n");
     {
@@ -120,7 +116,6 @@ int main(int argc, const char **argv) {
         vector_push_back(vec, b);
         vector_insert(vec, a, 0);
         STDX_ASSERT(vec->size == 4);
-        vector_for_each(vec, print_element);
         
         bool out_of_range_happened = false;
         try {
