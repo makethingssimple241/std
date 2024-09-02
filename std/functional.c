@@ -7,6 +7,11 @@
 
 #include "functional.h"
 
+hash hash_uintptr_t(const uintptr_t *value)
+{
+    return *value * 2654435761;
+}
+
 hash hash_string(const char **s)
 {
     if (*s) {
