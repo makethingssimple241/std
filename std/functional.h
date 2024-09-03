@@ -16,6 +16,7 @@ typedef size_t hash;
 typedef hash(* hash_function)(void *);
 
 hash hash_integer(uintptr_t *value);
-hash hash_string(const char **s);
+hash hash_c_str(const char **s);
+hash hash_string(string *string);
 
 #endif /* std_functional_h */
