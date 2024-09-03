@@ -14,7 +14,7 @@
 typedef struct {
     /// @brief The null-terminated C string of the `string`
     char *c_str;
-    /// @brief Size of `c_str` including the null-termination character
+    /// @brief Size of `c_str` not including the null-termination character
     size_t size;
 } string;
 

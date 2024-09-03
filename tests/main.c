@@ -140,7 +140,7 @@ int main(int argc, const char **argv) {
     
     printf("*** std/string.h, std/unordered_map.h and stdx/assert.h tests ***\n");
     {
-        unordered_map *map = new_unordered_map(const char *, string, hash_string);
+        unordered_map *map = new_unordered_map(const char *, string, hash_c_str);
         
         string *a = new_string_from_c_str("A");
         string *b = new_string_from_c_str("B");
