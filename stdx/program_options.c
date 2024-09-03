@@ -22,7 +22,7 @@ command_line_parser *new_command_line_parser(void)
         throw(system_error(errno, strerror(errno)));
     
     parser->options = new_vector(program_option);
-    parser->result = new_unordered_map(const char *, const char *, hash_string);
+    parser->result = new_unordered_map(const char *, const char *, hash_c_str);
     return parser;
 }
 

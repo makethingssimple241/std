@@ -12,7 +12,7 @@ hash hash_uintptr_t(const uintptr_t *value)
     return *value * 2654435761;
 }
 
-hash hash_string(const char **s)
+hash hash_c_str(const char **s)
 {
     if (*s) {
         unsigned long hash = 5381;
@@ -27,4 +27,14 @@ hash hash_string(const char **s)
     } else {
         return 0;
     }
+}
+
+hash hash_string(const string *string)
+{
+    unsigned long hash = 5381;
+
+    for (size_t i = 0; i < string->size; ++i)
+        hash = hash * 33 + string->c_str[i];
+
+    return hash;
 }
