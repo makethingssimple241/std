@@ -13,7 +13,9 @@
 
 #include <stdbool.h>
 
-#define new_unordered_map(K, V, _f) _new_unordered_map(sizeof(K), sizeof(V), (hash_function)(_f))
+/// @param _equal_function It should be a function that takes in two <tt>V *</tt>s and returns a @c bool of whether they are equal
+/// @param _hash_function It should be a function that takes in a <tt>V *</tt> and returns a @c hash
+#define new_unordered_map(K, V, _equal_function, _hash_function) _new_unordered_map(sizeof(K), sizeof(V), (equal_function)(_equal_function), (hash_function)(_hash_function))
 #define unordered_map_insert(map, key, value) _unordered_map_insert((map), (void *)(key), (void *)(value))
 #define unordered_map_at(map, key) _unordered_map_at((map), (void *)(key))
 #define unordered_map_contains(map, key) _unordered_map_contains((map), (void *)(key))
@@ -29,17 +31,18 @@ typedef struct {
 } unordered_map_value_type;
 
 typedef struct {
-    unordered_map_value_type *storage;
     size_t size;
     size_t storage_capacity;
+    unordered_map_value_type *storage;
     size_t key_size;
     size_t value_size;
+    equal_function equal_function;
     hash_function hash_function;
     float max_load_factor;
 } unordered_map;
 
 /// @note This is a private function that should not be called by the user
-unordered_map *_new_unordered_map(size_t key_size, size_t value_size, hash_function hash_function);
+unordered_map *_new_unordered_map(size_t key_size, size_t value_size, equal_function equal_function, hash_function hash_function);
 void delete_unordered_map(unordered_map *map);
 
 // MARK: Iterators

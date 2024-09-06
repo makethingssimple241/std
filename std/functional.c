@@ -38,3 +38,11 @@ hash hash_string(const string *string)
 
     return hash;
 }
+
+bool ptr_to_uintptr_t_equal(const uintptr_t *lhs, const uintptr_t *rhs) {
+    return *lhs == *rhs;
+}
+
+bool ptr_to_c_str_equal(const char **lhs, const char **rhs) {
+    return c_str_equal(*lhs, *rhs);
+}

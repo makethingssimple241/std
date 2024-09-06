@@ -30,6 +30,7 @@ string *new_string_from_c_str(const char *c_str)
         throw(new_exception(bad_alloc));
     
     s->size = strlen(c_str);
+    s->owns_c_str = true;
     return s;
 }
 
@@ -41,6 +42,7 @@ string *new_string_from_c_str_without_copy(char *c_str)
     
     s->c_str = c_str;
     s->size = strlen(c_str);
+    s->owns_c_str = false;
     return s;
 }
 
@@ -57,6 +59,19 @@ string *new_string_from_c_str_view(const char *c_str, size_t length)
     strncpy(s->c_str, c_str, length);
     s->c_str[length] = '\0';
     s->size = length;
+    s->owns_c_str = true;
+    return s;
+}
+
+string *new_string_from_c_str_view_without_copy(char *c_str, size_t length)
+{
+    string *s = allocator_allocate(sizeof(string));
+    if (!s)
+        throw(system_error(errno, strerror(errno)));
+    
+    s->c_str = c_str;
+    s->size = length;
+    s->owns_c_str = false;
     return s;
 }
 
@@ -67,7 +82,9 @@ string *copy_string(const string *s)
 
 void delete_string(string *s)
 {
-    allocator_free(s->c_str);
+    if (s->owns_c_str) {
+        allocator_free(s->c_str);
+    }
     allocator_free(s);
 }
 
@@ -171,7 +188,7 @@ bool string_equal(const string *s1, const string *s2)
     if (s1->size != s2->size)
         return false;
     
-    return c_str_equal(s1->c_str, s2->c_str);
+    return strncmp(s1->c_str, s2->c_str, s1->size) == 0;
 }
 
 bool string_equal_c_str(const string *s1, const char *s2)
