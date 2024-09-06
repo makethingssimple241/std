@@ -7,7 +7,7 @@
 
 #include "functional.h"
 
-hash hash_integer(uintptr_t *value)
+hash hash_integer(const uintptr_t *value)
 {
     return *value * 2654435761;
 }
@@ -29,7 +29,7 @@ hash hash_c_str(const char **s)
     }
 }
 
-hash hash_string(string *string)
+hash hash_string(const string *string)
 {
     unsigned long hash = 5381;
 
@@ -37,4 +37,12 @@ hash hash_string(string *string)
         hash = hash * 33 + string->c_str[i];
 
     return hash;
+}
+
+bool uintptr_t_equal(uintptr_t *lhs, uintptr_t *rhs) {
+    return *lhs == *rhs;
+}
+
+bool ptr_to_c_str_equal(const char **lhs, const char **rhs) {
+    return c_str_equal(*lhs, *rhs);
 }

@@ -16,6 +16,8 @@ typedef struct {
     char *c_str;
     /// @brief Size of `c_str` not including the null-termination character
     size_t size;
+    /// @note This is a private member that should not be used by the user
+    bool owns_c_str;
 } string;
 
 /// @brief Creates an empty string
@@ -23,6 +25,7 @@ string *new_string(void);
 string *new_string_from_c_str(const char *c_str);
 string *new_string_from_c_str_without_copy(char *c_str);
 string *new_string_from_c_str_view(const char *c_str, size_t length);
+string *new_string_from_c_str_view_without_copy(char *c_str, size_t length);
 string *copy_string(const string *s);
 void delete_string(string *s);
 
