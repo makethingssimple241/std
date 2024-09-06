@@ -40,6 +40,14 @@ void *vector_at(const vector *vec, size_t index)
     return vec->data + vec->value_size * index;
 }
 
+void *vector_front(const vector *vec)
+{
+    if (vec->size <= 0)
+        throw(new_exception(out_of_range));
+
+    return vector_at(vec, 0);
+}
+
 void *vector_back(const vector *vec)
 {
     if (vec->size <= 0)

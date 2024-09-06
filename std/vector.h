@@ -27,6 +27,7 @@ void delete_vector(vector *vec);
 // MARK: Element access
 
 void *vector_at(const vector *vec, size_t index);
+void *vector_front(const vector *vec);
 void *vector_back(const vector *vec);
 
 // MARK: Iterators
