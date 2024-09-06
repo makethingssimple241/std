@@ -14,7 +14,16 @@
 #include <stddef.h>
 #include <string.h>
 
-unordered_map *_new_unordered_map(size_t key_size, size_t value_size, hash_function hash_function)
+/// @link https://en.wikipedia.org/wiki/Open_addressing#Example_pseudocode
+static size_t unordered_map_find_index(const unordered_map *map, void *key) {
+    size_t i = map->hash_function(key) % map->storage_capacity;
+    while (map->storage[i].value && !map->equal_function(key, map->storage[i].key)) {
+        i = (i + 1) % map->storage_capacity;
+    }
+    return i;
+}
+
+unordered_map *_new_unordered_map(size_t key_size, size_t value_size, equal_function equal_function, hash_function hash_function)
 {
     unordered_map *map = allocator_allocate(sizeof(unordered_map));
     if (!map)
@@ -26,8 +35,9 @@ unordered_map *_new_unordered_map(size_t key_size, size_t value_size, hash_funct
     memset(map->storage, 0, sizeof(unordered_map_value_type) * map->storage_capacity);
     map->key_size = key_size;
     map->value_size = value_size;
-    map->max_load_factor = 0.8f;
+    map->equal_function = equal_function;
     map->hash_function = hash_function;
+    map->max_load_factor = 0.8f;
     
     return map;
 }
@@ -70,7 +80,7 @@ void unordered_map_next(const unordered_map *map, unordered_map_value_type** ite
     
     for (++i; i < map->storage_capacity; i++) {
         unordered_map_value_type *value = &map->storage[i];
-        if (value->key && map->hash_function(value->key) % map->storage_capacity == i && value->value) {
+        if (value->key && value->value) {
             *iterator = value;
             return;
         }
@@ -81,7 +91,7 @@ void unordered_map_next(const unordered_map *map, unordered_map_value_type** ite
 
 void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unordered_map_mapped_type value)
 {
-    size_t index = map->hash_function(key) % map->storage_capacity;
+    size_t index = unordered_map_find_index(map, key);
     
     if (unordered_map_load_factor(map) >= map->max_load_factor)
     {
@@ -107,6 +117,7 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
         
         // 3. Refill the reallocated storage with rehashed entries
         
+        // TODO: Investigate
         for (size_t i = 0; i < map->storage_capacity; i++) {
             size_t index = map->hash_function(copy[i].key) % map->storage_capacity;
             map->storage[index] = copy[i];
@@ -118,7 +129,7 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
         
         // 5. Generate a index to insert the new element with the resized size
         
-        index = map->hash_function(key) % map->storage_capacity;
+        index = unordered_map_find_index(map, key);
     }
 
     void *key_storage = allocator_allocate(map->key_size);
@@ -138,13 +149,12 @@ unordered_map_mapped_type _unordered_map_at(const unordered_map *map, unordered_
     if (!unordered_map_contains(map, key))
         throw(new_exception(out_of_range));
     
-    size_t index = map->hash_function(key) % map->storage_capacity;
-    return map->storage[index].value;
+    return map->storage[unordered_map_find_index(map, key)].value;
 }
 
 bool _unordered_map_contains(const unordered_map *map, unordered_map_key_type key)
 {
-    size_t index = map->hash_function(key) % map->storage_capacity;
+    size_t index = unordered_map_find_index(map, key);
     
     if (index >= map->storage_capacity)
         return false;
