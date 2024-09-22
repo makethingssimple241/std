@@ -60,7 +60,7 @@ void delete_unordered_map(unordered_map *map)
 unordered_map_value_type *unordered_map_begin(const unordered_map *map)
 {
     unordered_map_value_type *value = map->storage;
-    while (!value->value && value != unordered_map_end(map)) {
+    while (value != unordered_map_end(map) && !value->key && !value->value) {
         value++;
     }
     

@@ -165,6 +165,12 @@ int main(int argc, const char **argv) {
         delete_string(a);
         delete_string(b);
         delete_string(result);
+
+        unordered_map *empty_map = new_unordered_map(const char *, const char *, ptr_to_c_str_equal, hash_c_str);
+        for (unordered_map_value_type *it = unordered_map_begin(empty_map);
+             it != unordered_map_end(empty_map);
+             unordered_map_next(empty_map, &it));
+        delete_unordered_map(empty_map);
     }
     printf("*** tests completed ***\n\n");
     
