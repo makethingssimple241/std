@@ -146,3 +146,15 @@ void vector_clear(vector *vec)
     memset(vec->data, 0, vec->value_size * vec->size);
     vec->size = 0;
 }
+
+void vector_erase(vector *vec, size_t i)
+{
+    if (i >= vec->size)
+        throw(new_exception(out_of_range));
+
+    vec->size--;
+    
+    memmove(vec->data + vec->value_size * i,
+            vec->data + vec->value_size * (i + 1),
+            (vec->size - i) * vec->value_size);
+}
