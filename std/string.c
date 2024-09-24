@@ -82,6 +82,10 @@ string *copy_string(const string *s)
 
 void delete_string(string *s)
 {
+    if (!s) {
+        return;
+    }
+
     if (s->owns_c_str) {
         allocator_free(s->c_str);
     }

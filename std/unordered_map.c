@@ -44,6 +44,10 @@ unordered_map *_new_unordered_map(size_t key_size, size_t value_size, equal_func
 
 void delete_unordered_map(unordered_map *map)
 {
+    if (!map) {
+        return;
+    }
+
     for (size_t i = 0; i < map->storage_capacity; i++) {
         void *key = map->storage[i].key;
         void *value = map->storage[i].value;
