@@ -12,6 +12,10 @@
 
 void delete_filesystem_path(filesystem_path *path)
 {
+    if (!path) {
+        return;
+    }
+
     delete_string(path);
 }
 

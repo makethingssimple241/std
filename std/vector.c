@@ -29,6 +29,10 @@ vector *_new_vector(size_t value_size)
 
 void delete_vector(vector *vec)
 {
+    if (!vec) {
+        return;
+    }
+
     allocator_free(vec->data);
     allocator_free(vec);
 }
