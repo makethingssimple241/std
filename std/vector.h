@@ -53,5 +53,6 @@ void vector_push_back_unsafe(vector *vec, const void* value);
 void *vector_pop_back(vector* vec);
 void vector_insert(vector *vec, const void *value, size_t i);
 void vector_clear(vector* vec);
+void vector_erase(vector *vec, size_t i);
 
 #endif /* std_vector_h */
