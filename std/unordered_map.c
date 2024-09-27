@@ -14,13 +14,17 @@
 #include <stddef.h>
 #include <string.h>
 
-/// @link https://en.wikipedia.org/wiki/Open_addressing#Example_pseudocode
-static size_t unordered_map_find_index(const unordered_map *map, void *key) {
-    size_t i = map->hash_function(key) % map->storage_capacity;
-    while (map->storage[i].value && !map->equal_function(key, map->storage[i].key)) {
-        i = (i + 1) % map->storage_capacity;
+static size_t _unordered_map_find_index(size_t capacity, unordered_map_value_type *storage, equal_function equal_function, hash_function hash_function, void *key) {
+    size_t i = hash_function(key) % capacity;
+    while (storage[i].value && !equal_function(key, storage[i].key)) {
+        i = (i + 1) % capacity;
     }
     return i;
+}
+
+/// @link https://en.wikipedia.org/wiki/Open_addressing#Example_pseudocode
+static size_t unordered_map_find_index(const unordered_map *map, void *key) {
+    return _unordered_map_find_index(map->storage_capacity, map->storage, map->equal_function, map->hash_function, key);
 }
 
 unordered_map *_new_unordered_map(size_t key_size, size_t value_size, equal_function equal_function, hash_function hash_function)
@@ -95,46 +99,37 @@ void unordered_map_next(const unordered_map *map, unordered_map_value_type** ite
 
 void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unordered_map_mapped_type value)
 {
-    size_t index = unordered_map_find_index(map, key);
-    
     if (unordered_map_load_factor(map) >= map->max_load_factor)
-    {
-        // 1. Make a copy of the original entries
-        
-        unordered_map_value_type *copy = allocator_allocate(sizeof(unordered_map_value_type) * map->storage_capacity);
-        if (!copy)
-            throw(new_exception(bad_alloc));
-        
-        memcpy(copy, map->storage, sizeof(unordered_map_value_type) * map->storage_capacity);
-        
-        // 2. Resize storage
+    {   
+        // Allocate new storage
         
         size_t new_capacity = map->storage_capacity * 2;
-        map->storage_capacity *= 2;
-        allocator_free(map->storage);
-        map->storage = allocator_allocate(new_capacity * sizeof(unordered_map_value_type));
-        if (!map->storage)
+        size_t new_capacity_in_bytes = new_capacity * sizeof(unordered_map_value_type);
+        unordered_map_value_type *new_storage = allocator_allocate(new_capacity_in_bytes);
+        if (!new_storage)
             throw(new_exception(bad_alloc));
 
-        memset(map->storage + map->storage_capacity, 0, map->storage_capacity);
-        map->storage_capacity = new_capacity;
+        memset(new_storage, 0, new_capacity_in_bytes);
         
-        // 3. Refill the reallocated storage with rehashed entries
-        
-        // TODO: Investigate
+        // Copy the original elements into a rehashed location in the new storage
+
         for (size_t i = 0; i < map->storage_capacity; i++) {
-            size_t index = map->hash_function(copy[i].key) % map->storage_capacity;
-            map->storage[index] = copy[i];
+            if (!map->storage[i].key || !map->storage[i].value) {
+                continue;
+            }
+            
+            size_t index_in_new_storage = _unordered_map_find_index(new_capacity, new_storage, map->equal_function, map->hash_function, map->storage[i].key);
+            new_storage[index_in_new_storage] = map->storage[i];
         }
         
-        // 4. Free the memory of the copy
-        
-        allocator_free(copy);
-        
-        // 5. Generate a index to insert the new element with the resized size
-        
-        index = unordered_map_find_index(map, key);
+        // Migrate to new storage and capacity
+
+        allocator_free(map->storage);
+        map->storage = new_storage;
+        map->storage_capacity = new_capacity;
     }
+
+    size_t insert_index = unordered_map_find_index(map, key);
 
     void *key_storage = allocator_allocate(map->key_size);
     memset(key_storage, 0, map->key_size);
@@ -144,7 +139,7 @@ void _unordered_map_insert(unordered_map *map, unordered_map_key_type key, unord
     memset(value_storage, 0, map->value_size);
     memcpy(value_storage, value, map->value_size);
 
-    map->storage[index] = (unordered_map_value_type){key_storage, value_storage};
+    map->storage[insert_index] = (unordered_map_value_type){key_storage, value_storage};
     map->size++;
 }
 

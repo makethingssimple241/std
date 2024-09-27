@@ -140,15 +140,13 @@ int main(int argc, const char **argv) {
     
     printf("*** std/string.h, std/unordered_map.h and stdx/assert.h tests ***\n");
     {
-        unordered_map *map = new_unordered_map(const char *, string, ptr_to_c_str_equal, hash_c_str);
+        unordered_map *map = new_unordered_map(uintptr_t, string, ptr_to_uintptr_t_equal, hash_uintptr_t);
         
         string *a = new_string_from_c_str("A");
-        string *b = new_string_from_c_str("B");
-        
-        const char* acs = "A";
-        const char* bcs = "B";
-        unordered_map_insert(map, &acs, a);
-        unordered_map_insert(map, &bcs, b);
+
+        for (size_t i = 0; i < 20; i++) {
+            unordered_map_insert(map, &i, a);
+        }
         
         string *result = new_string();
         
@@ -159,11 +157,10 @@ int main(int argc, const char **argv) {
              unordered_map_next(map, &it))
             string_concatenate(result, it->value);
         
-        STDX_ASSERT(string_equal_c_str(result, "AB"));
+        STDX_ASSERT(string_equal_c_str(result, "AAAAAAAAAAAAAAAAAAAA"));
         
         delete_unordered_map(map);
         delete_string(a);
-        delete_string(b);
         delete_string(result);
 
         unordered_map *empty_map = new_unordered_map(const char *, const char *, ptr_to_c_str_equal, hash_c_str);

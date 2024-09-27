@@ -34,12 +34,11 @@ void _try(jmp_buf *buf)
 {
     if (!_eh_frame)
         _eh_frame = new_vector(jmp_buf *); // if this fails, the program crashes
-    
+
     vector_push_back(_eh_frame, &buf);
 }
 
-bool _catch(void)
-{
+bool _try_end(void) {
     vector_pop_back(_eh_frame);
     return true;
 }
