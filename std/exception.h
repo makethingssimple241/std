@@ -14,11 +14,11 @@
 #include <stdbool.h>
 #include <setjmp.h>
 
+/// @note Must not return from <tt>try</tt>, @c catch or @c catchall
 #define try \
-    jmp_buf _eh; \
-    _try(&_eh); \
-    if (setjmp(_eh) == 0)
-#define catch(_id) else if (exception.id == _id && _catch())
+    for (struct { jmp_buf buf; bool ended; } _frame = {.ended=false}; _frame.ended ? _try_end() : _try(&_frame.buf), !_frame.ended; _frame.ended = true) \
+        if (setjmp(_frame.buf) == 0)
+#define catch(_id) else if (exception.id == _id)
 #define catchall else
 #define rethrow _throw()
 #define throw(_exception) do { exception = (_exception); rethrow; } while (0)
@@ -42,7 +42,7 @@ terminate_handler get_terminate(void);
 void set_terminate(terminate_handler f);
 
 void _try(jmp_buf *buf);
-bool _catch(void);
+bool _try_end(void);
 void _throw(void);
 
 #endif /* std_exception_h */
