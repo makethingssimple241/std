@@ -34,7 +34,7 @@ struct exception {
 
 typedef noreturn void (*terminate_handler)(void);
 
-extern vector *_eh_frame;
+extern vector _eh_frame;
 extern struct exception exception;
 
 noreturn void terminate(void);

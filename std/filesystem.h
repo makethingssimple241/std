@@ -19,13 +19,13 @@
 typedef string filesystem_path;
 
 /// @brief Returns the path of the current working directory
-filesystem_path *new_filesystem_path(void);
+filesystem_path new_filesystem_path(void);
 void delete_filesystem_path(filesystem_path *path);
 
 // MARK: Decomposition
 
-filesystem_path *filesystem_path_root_name(const filesystem_path *path);
-filesystem_path *filesystem_path_extension(const filesystem_path *path);
+filesystem_path filesystem_path_root_name(const filesystem_path *path);
+filesystem_path filesystem_path_extension(const filesystem_path *path);
 
 // MARK: Queries
 

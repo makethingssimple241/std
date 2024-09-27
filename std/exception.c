@@ -14,7 +14,7 @@ noreturn void _terminate(void) {
     abort();
 }
 
-vector *_eh_frame = NULL;
+vector _eh_frame = {0};
 struct exception exception;
 static terminate_handler _terminate_handler = _terminate;
 
@@ -32,20 +32,20 @@ void set_terminate(terminate_handler f) {
 
 void _try(jmp_buf *buf)
 {
-    if (!_eh_frame)
+    if (!_eh_frame.data)
         _eh_frame = new_vector(jmp_buf *); // if this fails, the program crashes
 
-    vector_push_back(_eh_frame, &buf);
+    vector_push_back(&_eh_frame, &buf);
 }
 
 bool _try_end(void) {
-    vector_pop_back(_eh_frame);
+    vector_pop_back(&_eh_frame);
     return true;
 }
 
 void _throw(void)
 {
-    jmp_buf **eh = vector_pop_back(_eh_frame);
+    jmp_buf **eh = vector_pop_back(&_eh_frame);
     if (eh)
         longjmp(**eh, 1);
     else

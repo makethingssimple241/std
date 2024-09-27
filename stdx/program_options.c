@@ -29,35 +29,35 @@ command_line_parser *new_command_line_parser(void)
 void delete_command_line_parser(command_line_parser *parser)
 {
     delete_unordered_map(parser->result);
-    delete_vector(parser->options);
+    delete_vector(&parser->options);
     allocator_free(parser);
 }
 
 void command_line_parser_add_options(command_line_parser *parser, program_option *options, size_t count)
 {
     for (size_t i = 0; i < count; i++) {
-        vector_push_back(parser->options, &options[i]);
+        vector_push_back(&parser->options, &options[i]);
     }
 }
 
 void command_line_parser_describe_options(command_line_parser *parser, FILE *stream)
 {
-    vector *key_lengths = new_vector(size_t);
-    vector_reserve(key_lengths, parser->options->size);
+    vector key_lengths = new_vector(size_t);
+    vector_reserve(&key_lengths, parser->options.size);
     size_t max_key_and_requirements_length = 0;
 
-    for (size_t i = 0; i < parser->options->size; i++) {
-        program_option *option = vector_at(parser->options, i);
+    for (size_t i = 0; i < parser->options.size; i++) {
+        program_option *option = vector_at(&parser->options, i);
         size_t length = strlen(option->key);
         if (length > max_key_and_requirements_length)
             max_key_and_requirements_length = length;
 
-        vector_push_back(key_lengths, &length);
+        vector_push_back(&key_lengths, &length);
     }
 
-    for (size_t i = 0; i < parser->options->size; i++) {
-        program_option *option = vector_at(parser->options, i);
-        size_t *length = vector_at(key_lengths, i);
+    for (size_t i = 0; i < parser->options.size; i++) {
+        program_option *option = vector_at(&parser->options, i);
+        size_t *length = vector_at(&key_lengths, i);
         fprintf(stream, "  %s", option->key);
 
         for (size_t spaces_to_be_printed = 0; spaces_to_be_printed < max_key_and_requirements_length - *length; spaces_to_be_printed++)
@@ -66,24 +66,24 @@ void command_line_parser_describe_options(command_line_parser *parser, FILE *str
         fprintf(stream, "    %s%s\n", option->description, option->required ? " (required)" : "");
     }
 
-    delete_vector(key_lengths);
+    delete_vector(&key_lengths);
 }
 
 void command_line_parser_parse(command_line_parser *parser, int argc, const char **argv)
 {
     for (size_t arg_index = 1; arg_index < argc; arg_index++) {
-        for (size_t opt_index = 0; opt_index < parser->options->size; opt_index++) {
-            program_option *option = vector_at(parser->options, opt_index);
-            string *key = new_string_from_c_str(option->key);
+        for (size_t opt_index = 0; opt_index < parser->options.size; opt_index++) {
+            program_option *option = vector_at(&parser->options, opt_index);
+            string key = new_string_from_c_str(option->key);
             
-            char *long_key = key->c_str;
+            char *long_key = key.c_str;
             char *short_key = null;
-            if ((short_key = strchr(key->c_str, ','))) {
+            if ((short_key = strchr(key.c_str, ','))) {
                 *short_key = '\0';
                 short_key++; // make short key point to character after ','
                 
                 if (*short_key == '\0') {
-                    delete_string(key);
+                    delete_string(&key);
                     throw(new_exceptionx(command_line_parser_error, "Expected short key after ','"));
                 }
             }
@@ -100,9 +100,9 @@ void command_line_parser_parse(command_line_parser *parser, int argc, const char
                 case program_option_type_value: {
                     if (++arg_index >= argc) {
                         // TODO: Memory of what will not be freed, allocate from arena
-                        string *what = format("Expected value after value argument '%s'", key->c_str);
-                        delete_string(key);
-                        throw(new_exceptionx(command_line_parser_error, what->c_str));
+                        string what = format("Expected value after value argument '%s'", key.c_str);
+                        delete_string(&key);
+                        throw(new_exceptionx(command_line_parser_error, what.c_str));
                     }
                     
                     unordered_map_insert(parser->result, &long_key, &argv[arg_index]);

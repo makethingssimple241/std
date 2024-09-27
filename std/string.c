@@ -14,68 +14,58 @@
 #include <errno.h>
 #include <string.h>
 
-string *new_string(void)
+string new_string(void)
 {
     return new_string_from_c_str("");
 }
 
-string *new_string_from_c_str(const char *c_str)
+string new_string_from_c_str(const char *c_str)
 {
-    string *s = allocator_allocate(sizeof(string));
-    if (!s)
-        throw(system_error(errno, strerror(errno)));
+    string s = {0};
     
-    s->c_str = strdup(c_str);
-    if (!s->c_str)
+    s.c_str = strdup(c_str);
+    if (!s.c_str)
         throw(new_exception(bad_alloc));
     
-    s->size = strlen(c_str);
-    s->owns_c_str = true;
+    s.size = strlen(c_str);
+    s.owns_c_str = true;
     return s;
 }
 
-string *new_string_from_c_str_without_copy(char *c_str)
+string new_string_from_c_str_without_copy(char *c_str)
 {
-    string *s = allocator_allocate(sizeof(string));
-    if (!s)
-        throw(system_error(errno, strerror(errno)));
-    
-    s->c_str = c_str;
-    s->size = strlen(c_str);
-    s->owns_c_str = false;
+    string s = {0};
+    s.c_str = c_str;
+    s.size = strlen(c_str);
+    s.owns_c_str = false;
     return s;
 }
 
-string *new_string_from_c_str_view(const char *c_str, size_t length)
+string new_string_from_c_str_view(const char *c_str, size_t length)
 {
-    string *s = allocator_allocate(sizeof(string));
-    if (!s)
+    string s = {0};
+
+    s.c_str = allocator_allocate(sizeof(char) * (length + 1));
+    if (!s.c_str)
         throw(new_exception(bad_alloc));
     
-    s->c_str = allocator_allocate(sizeof(char) * (length + 1));
-    if (!s->c_str)
-        throw(new_exception(bad_alloc));
-    
-    strncpy(s->c_str, c_str, length);
-    s->c_str[length] = '\0';
-    s->size = length;
-    s->owns_c_str = true;
+    strncpy(s.c_str, c_str, length);
+    s.c_str[length] = '\0';
+    s.size = length;
+    s.owns_c_str = true;
     return s;
 }
 
-string *new_string_from_c_str_view_without_copy(char *c_str, size_t length)
+string new_string_from_c_str_view_without_copy(char *c_str, size_t length)
 {
-    string *s = allocator_allocate(sizeof(string));
-    if (!s)
-        throw(system_error(errno, strerror(errno)));
-    
-    s->c_str = c_str;
-    s->size = length;
-    s->owns_c_str = false;
+    string s = {0};
+    s.c_str = c_str;
+    s.size = length;
+    s.owns_c_str = false;
     return s;
 }
 
-string *copy_string(const string *s)
+string copy_string(const string *s)
 {
     return new_string_from_c_str(s->c_str);
 }
@@ -89,7 +79,6 @@ void delete_string(string *s)
     if (s->owns_c_str) {
         allocator_free(s->c_str);
     }
-    allocator_free(s);
 }
 
 void string_concatenate(string *s1, const string *s2)

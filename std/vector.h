@@ -21,7 +21,7 @@ typedef struct {
 } vector;
 
 /// @note This is a private function that should not be called by the user
-vector *_new_vector(size_t value_size);
+vector _new_vector(size_t value_size);
 void delete_vector(vector *vec);
 
 // MARK: Element access

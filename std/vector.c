@@ -13,17 +13,13 @@
 #include <errno.h>
 #include <string.h>
 
-vector *_new_vector(size_t value_size)
+vector _new_vector(size_t value_size)
 {
-    vector *vec = allocator_allocate(sizeof(vector));
-    if (!vec)
-        throw(new_exception(bad_alloc));
-    
-    vec->value_size = value_size;
-    vec->size = 0;
-    vec->capacity = 0;
-    vec->data = null;
-    
+    vector vec = {0};
+    vec.value_size = value_size;
+    vec.size = 0;
+    vec.capacity = 0;
+    vec.data = null;
     return vec;
 }
 
@@ -34,7 +30,6 @@ void delete_vector(vector *vec)
     }
 
     allocator_free(vec->data);
-    allocator_free(vec);
 }
 
 void *vector_at(const vector *vec, size_t index)

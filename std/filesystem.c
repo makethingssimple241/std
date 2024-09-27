@@ -19,7 +19,7 @@ void delete_filesystem_path(filesystem_path *path)
     delete_string(path);
 }
 
-filesystem_path *filesystem_path_extension(const filesystem_path *path)
+filesystem_path filesystem_path_extension(const filesystem_path *path)
 {
     if (filesystem_path_has_extension(path))
         return new_string_from_c_str(strrchr(path->c_str, '.') + 1);
