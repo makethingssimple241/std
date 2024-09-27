@@ -20,7 +20,7 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 
-filesystem_path *new_filesystem_path(void)
+filesystem_path new_filesystem_path(void)
 {
     char *buffer = allocator_allocate(sizeof(char) * MAXPATHLEN);
     if (!buffer)
@@ -32,7 +32,7 @@ filesystem_path *new_filesystem_path(void)
     return new_string_from_c_str_without_copy(buffer);
 }
 
-filesystem_path *filesystem_path_root_name(const filesystem_path *path)
+filesystem_path filesystem_path_root_name(const filesystem_path *path)
 {
     if (filesystem_path_is_absolute(path))
         return new_string_from_c_str("/");

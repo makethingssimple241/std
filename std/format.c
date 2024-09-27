@@ -14,7 +14,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-string *format(const char *format, ...)
+string format(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -22,7 +22,7 @@ string *format(const char *format, ...)
     va_end(args);
     
     if (size <= 0) {
-        return null;
+        return new_string();
     }
     
     va_start(args, format);

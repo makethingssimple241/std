@@ -12,6 +12,6 @@
 
 #define format_error E2BIG
 
-string *format(const char *format, ...);
+string format(const char *format, ...);
 
 #endif /* std_format_h */

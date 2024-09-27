@@ -21,12 +21,12 @@ typedef struct {
 } string;
 
 /// @brief Creates an empty string
-string *new_string(void);
-string *new_string_from_c_str(const char *c_str);
-string *new_string_from_c_str_without_copy(char *c_str);
-string *new_string_from_c_str_view(const char *c_str, size_t length);
-string *new_string_from_c_str_view_without_copy(char *c_str, size_t length);
-string *copy_string(const string *s);
+string new_string(void);
+string new_string_from_c_str(const char *c_str);
+string new_string_from_c_str_without_copy(char *c_str);
+string new_string_from_c_str_view(const char *c_str, size_t length);
+string new_string_from_c_str_view_without_copy(char *c_str, size_t length);
+string copy_string(const string *s);
 void delete_string(string *s);
 
 // MARK: Modifiers

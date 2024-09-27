@@ -68,7 +68,7 @@ void fstream_close(const fstream *fs) {
         throw(system_error(errno, strerror(errno)));
 }
 
-void fstream_getline(const fstream *fs, string **s)
+void fstream_getline(const fstream *fs, string *s)
 {
     char* buffer = NULL;
     size_t size = 0;

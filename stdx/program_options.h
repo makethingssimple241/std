@@ -31,7 +31,7 @@ typedef struct {
 /// @note Pointer to argv elements within result is a weak reference into argv.
 /// The caller must guarantee that those argv elements are availible in the retrival from result.
 typedef struct {
-    vector *options;
+    vector options;
     /// @brief unordered_map from @c const char * @c to @c const char * @c
     /// @note Values of @c program_option_type_flag @c will be @c 1 @c
     unordered_map *result;

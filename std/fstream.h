@@ -40,6 +40,6 @@ void fstream_close(const fstream *fs);
 
 /// @note If the function succeed, `*s` will be a valid `string *` that needs to be `delete_string`ed by the caller.
 /// If the function fails, `*s` will be left untouched.
-void fstream_getline(const fstream *fs, string **s);
+void fstream_getline(const fstream *fs, string *s);
 
 #endif /* std_fstream_h */
