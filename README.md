@@ -60,9 +60,6 @@ If a throwing function is called without being enclosed in a `try` block and the
 ### stdx.program_options
 `stdx.program_options` provides types and functions for parsing command line arguments.
 
-### stdx.test
-`stdx.test` provides utilities for unit testing.
-
 ## Building and using `std` and `stdx`
 
 ### Building `std` and `stdx`
@@ -73,7 +70,7 @@ TODO: Add building instructions
 > `stdx` depends on `std`
 
 > [!NOTE]
-> `Enable Modules (C and Objective-C)` needs to be disabled when building a target that includes `std`.
+> When building with Xcode, `Enable Modules (C and Objective-C)` needs to be disabled when building a target that includes `std`.
 
 ### Using `std` and `stdx`
 
