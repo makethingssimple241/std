@@ -34,7 +34,7 @@ If a throwing function is called without being enclosed in a `try` block and the
 `std.filesystem` contains platform-agnostic filesystem utilities.
 
 > [!CAUTION]
-> `std.filesystem` is an incomplete module. It only support macOS at the moment and is not fully tested.
+> `std.filesystem` is an incomplete module. It only supports macOS at the moment and is not fully tested.
 
 ### std.format
 
@@ -50,6 +50,10 @@ If a throwing function is called without being enclosed in a `try` block and the
 
 ### std.string
 `std.string` provides a size-included structure for a null-terminated string and functions around it.
+
+### std.unordered_map
+
+`std.unordered_map` provides a unordered map (hash map) and functions around it.
 
 ### std.vector
 `std.vector` provides a vector (dynamic array) and functions around it.
