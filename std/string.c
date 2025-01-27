@@ -99,9 +99,9 @@ void string_concatenate(string *s1, const string *s2)
 
 void string_concatenate_with_c_str(string *s1, const char* s2)
 {
-    size_t s2Length = strlen(s2);
+    size_t s2_length = strlen(s2);
     
-    size_t length = s2Length + s1->size;
+    size_t length = s2_length + s1->size;
     char *buffer = allocator_allocate(sizeof(char) * (length + 1));
     if (!buffer)
         throw(new_exception(bad_alloc));
